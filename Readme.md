@@ -13,11 +13,14 @@ This package provides the following features:
 
 ```bash
 go get github.com/amitjangid80/go-mongodb-client@latest
+```
 
+## 📦 Usage
 
-import (
-    "github.com/amitjangid80/go-mongodb-client/mongodb_client"
-)
+### You can add this in your main.go file or wherever you are setting up your db connection
+
+```go
+import "github.com/amitjangid80/go-mongodb-client/mongodb_client"
 
 func main() {
     mongodbConfig := mongodb_client.MongodbConfig{
@@ -30,3 +33,4 @@ func main() {
 
     mongodb_client.ConnectDb(&mongodbConfig)
 }
+```
