@@ -1,4 +1,4 @@
-package model
+package mongodb_client
 
 type MongodbConfig struct {
 	Username string

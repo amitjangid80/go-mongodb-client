@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/amitjangid80/go-mongodb-client/src/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -25,7 +24,7 @@ func GetClient() *mongo.Client {
 }
 
 // ConnectDB initializes a MongoDB client and returns the database reference.
-func ConnectDb(config *model.MongodbConfig) {
+func ConnectDb(config *MongodbConfig) {
 	// Get MongoDB URI from environment variable if set, otherwise use default
 	mongoDbUrl := fmt.Sprintf("mongodb://%s:%s@%s:%s", config.Username, config.Password, config.Host, config.Port)
 
@@ -47,8 +46,6 @@ func ConnectDb(config *model.MongodbConfig) {
 	log.Printf("Connected to MongoDB on port: %s", config.Port)
 
 	mongodb = client.Database(config.DbName)
-
-	CreateCollections(ctx, config.DbName, "dummy")
 }
 
 // Create Collections
