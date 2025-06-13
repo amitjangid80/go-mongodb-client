@@ -8,4 +8,4 @@ A simple utility Go package for connecting to Mongodb. This package has followin
 ## Install
 
 ```bash
-go get github.com/<your-username>/go-utils@latest
+go get github.com/amitjangid80/go-mongodb-client@latest
