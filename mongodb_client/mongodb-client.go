@@ -24,7 +24,7 @@ func GetDb(dbName string) *mongo.Database {
 }
 
 // Connect Mongodb function will initialize and connect to mongodb based on the URL, Port and Host passed via config
-func ConnectDb(config *MongodbConfigV2) {
+func ConnectDb(config *MongodbConfig) {
 	// Get MongoDB URI from environment variable if set, otherwise use default
 	mongoDbUrl := fmt.Sprintf("mongodb://%s:%s@%s:%s", config.Username, config.Password, config.Host, config.Port)
 
