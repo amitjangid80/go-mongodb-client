@@ -1,6 +1,6 @@
 module github.com/amitjangid80/go-mongodb-client
 
-go 1.23.6
+go 1.24.5
 
 require go.mongodb.org/mongo-driver v1.17.4
 

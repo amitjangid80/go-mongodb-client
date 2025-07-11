@@ -1,9 +1,8 @@
 package mongodb_client
 
-type MongodbConfig struct {
+type MongodbConfigV2 struct {
 	Username string
 	Password string
 	Host     string
 	Port     string
-	DbName   string
 }

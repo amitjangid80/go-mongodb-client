@@ -11,20 +11,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var mongodb *mongo.Database
-
-// GetDb returns the mongodb client.
-func GetDb() *mongo.Database {
-	return mongodb
-}
+var client *mongo.Client
 
 // GetClient returns the mongodb client.
 func GetClient() *mongo.Client {
-	return mongodb.Client()
+	return client
 }
 
-// ConnectDB initializes a MongoDB client and returns the database reference.
-func ConnectDb(config *MongodbConfig) {
+// GetDb returns the mongodb client.
+func GetDb(dbName string) *mongo.Database {
+	return client.Database(dbName)
+}
+
+// Connect Mongodb function will initialize and connect to mongodb based on the URL, Port and Host passed via config
+func ConnectDb(config *MongodbConfigV2) {
 	// Get MongoDB URI from environment variable if set, otherwise use default
 	mongoDbUrl := fmt.Sprintf("mongodb://%s:%s@%s:%s", config.Username, config.Password, config.Host, config.Port)
 
@@ -32,30 +32,29 @@ func ConnectDb(config *MongodbConfig) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, clientOpts)
+	var err error
+	client, err = mongo.Connect(ctx, clientOpts)
 
 	if err != nil {
-		log.Fatalf("Failed to connect to MongoDB: %v", err)
+		log.Fatalf("❌ Failed to connect to MongoDB: %v", err)
 	}
 
 	// Verify connection
 	if err := client.Ping(ctx, nil); err != nil {
-		log.Fatalf("Failed to ping MongoDB: %v", err)
+		log.Fatalf("❌ Failed to ping MongoDB: %v", err)
 	}
 
-	log.Printf("Connected to MongoDB on port: %s", config.Port)
-
-	mongodb = client.Database(config.DbName)
+	log.Printf("✅ Connected to MongoDB on port: %s", config.Port)
 }
 
 // Create Collections
 func CreateCollections(ctx context.Context, dbName string, collectionName string) {
 	// List existing collections
-	existingCollections, err := GetDb().ListCollectionNames(ctx, bson.D{})
+	existingCollections, err := GetDb(dbName).ListCollectionNames(ctx, bson.D{})
 	log.Printf("List of Collections in %s: %v", dbName, existingCollections)
 
 	if err != nil {
-		log.Fatalf("Failed to list collections in DB %s: %v", dbName, err)
+		log.Fatalf("❌ Failed to list collections in DB %s: %v", dbName, err)
 	}
 
 	existingMap := make(map[string]bool)
@@ -66,12 +65,12 @@ func CreateCollections(ctx context.Context, dbName string, collectionName string
 
 	// Create only missing collections
 	if !existingMap[collectionName] {
-		if err := GetDb().CreateCollection(ctx, collectionName); err != nil {
-			log.Fatalf("Failed to create collection %s: %v", collectionName, err)
+		if err := GetDb(dbName).CreateCollection(ctx, collectionName); err != nil {
+			log.Fatalf("❌ Failed to create collection %s: %v", collectionName, err)
 		}
 
-		log.Printf("Created collection: %s", collectionName)
+		log.Printf("✅ Created collection: %s", collectionName)
 	} else {
-		log.Printf("Collection already present: %s", collectionName)
+		log.Printf("✅ Collection already present: %s", collectionName)
 	}
 }
