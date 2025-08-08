@@ -1,4 +1,4 @@
-package mongodb_repositories
+package mongodb_query
 
 import (
 	"context"
