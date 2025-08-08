@@ -25,6 +25,8 @@ func GetDb(dbName string) *mongo.Database {
 
 // Connect Mongodb function will initialize and connect to mongodb based on the URL, Port and Host passed via config
 func ConnectDb(config *MongodbConfig) {
+	log.Printf("✅ Connecting to MongoDB on port: %s...", config.Port)
+
 	// Get MongoDB URI from environment variable if set, otherwise use default
 	mongoDbUrl := fmt.Sprintf("mongodb://%s:%s@%s:%s", config.Username, config.Password, config.Host, config.Port)
 
@@ -47,8 +49,8 @@ func ConnectDb(config *MongodbConfig) {
 	log.Printf("✅ Connected to MongoDB on port: %s", config.Port)
 }
 
-// Create Collections
-func CreateCollections(dbName string, collectionName string) {
+// Create Collection
+func CreateCollection(dbName string, collectionName string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -75,6 +77,41 @@ func CreateCollections(dbName string, collectionName string) {
 		log.Printf("✅ Created collection: %s", collectionName)
 	} else {
 		log.Printf("✅ Collection already present: %s", collectionName)
+	}
+}
+
+// Create Collections
+func CreateCollections(dbName string, collections []string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	db := GetDb(dbName)
+
+	// List existing collections
+	existingCollections, err := db.ListCollectionNames(ctx, bson.D{})
+	log.Printf("List of Collections: %s", existingCollections)
+
+	if err != nil {
+		log.Fatalf("Failed to list collections in DB %s: %v", dbName, err)
+	}
+
+	existingMap := make(map[string]bool)
+
+	for _, name := range existingCollections {
+		existingMap[name] = true
+	}
+
+	log.Printf("Collections already present: %v", existingMap)
+
+	// Create only missing collections
+	for _, collection := range collections {
+		if !existingMap[collection] {
+			if err := db.CreateCollection(ctx, collection); err != nil {
+				log.Fatalf("Failed to create collection %s: %v", collection, err)
+			}
+
+			log.Printf("Created collection: %s", collection)
+		}
 	}
 }
 
