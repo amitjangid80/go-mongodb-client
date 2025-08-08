@@ -14,7 +14,7 @@ import (
 )
 
 type IGetByIdRepository[T mongodb_domain.BaseDmlModel] interface {
-	GetById(id string, dbName string, collectionName string) (*T, error)
+	GetById(id string, dbName string, collectionName string, createdBy string) (*T, error)
 }
 
 type GetByIdRepositoryImpl[T mongodb_domain.BaseDmlModel] struct{}
@@ -24,7 +24,7 @@ func GetByIdRepository[T mongodb_domain.BaseDmlModel]() IGetByIdRepository[T] {
 }
 
 // GetById implements GetByIdRepositoryImpl.
-func (g *GetByIdRepositoryImpl[T]) GetById(id string, dbName string, collectionName string) (*T, error) {
+func (g *GetByIdRepositoryImpl[T]) GetById(id string, dbName string, collectionName string, createdBy string) (*T, error) {
 	bgCtx := context.Background()
 	ctx, cancel := context.WithTimeout(bgCtx, 5*time.Second)
 	defer cancel()
@@ -37,7 +37,7 @@ func (g *GetByIdRepositoryImpl[T]) GetById(id string, dbName string, collectionN
 		return nil, err
 	}
 
-	filter := bson.M{"_id": objectId}
+	filter := bson.M{"_id": objectId, "createdBy": createdBy}
 	collection := mongodb_client.GetClient().Database(dbName).Collection(collectionName)
 
 	var result T

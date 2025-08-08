@@ -74,3 +74,36 @@ func CreateCollections(ctx context.Context, dbName string, collectionName string
 		log.Printf("✅ Collection already present: %s", collectionName)
 	}
 }
+
+func CreateIndex(dbName string, collectionName string, indexModel mongo.IndexModel) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := GetDb(dbName).Collection(collectionName).Indexes().CreateOne(ctx, indexModel)
+
+	if err != nil {
+		log.Fatalf("❌ Failed to create index for collection: %s in db: %s", collectionName, dbName)
+		log.Fatalf("❌ Error while creating creating index: %v", err)
+	} else {
+		log.Println("✅ Index Created Successfully")
+	}
+}
+
+func CreateUniqueIndex(dbName string, collectionName string, field string) {
+	indexModel := mongo.IndexModel{
+		Keys:    bson.M{field: 1},
+		Options: options.Index().SetUnique(true),
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := GetDb(dbName).Collection(collectionName).Indexes().CreateOne(ctx, indexModel)
+
+	if err != nil {
+		log.Fatalf("❌ Failed to create index for collection: %s in db: %s", collectionName, dbName)
+		log.Fatalf("❌ Error while creating creating index: %v", err)
+	} else {
+		log.Println("✅ Index Created Successfully")
+	}
+}

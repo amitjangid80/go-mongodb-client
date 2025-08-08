@@ -1,12 +1,12 @@
 package mongodb_domain
 
 type BaseDmlModel interface {
+	GetId() string
+	SetId(id string)
 	SetCreatedBy(by string)
 	SetCreatedOn(on string)
 	SetModifiedBy(by string)
 	SetModifiedOn(on string)
-	GetId() string
-	SetId(id string)
 }
 
 type DmlModel struct {
@@ -18,9 +18,9 @@ type DmlModel struct {
 }
 
 // Implement Auditable interface
+func (d *DmlModel) GetId() string           { return d.Id }
+func (d *DmlModel) SetId(id string)         { d.Id = id }
 func (d *DmlModel) SetCreatedBy(by string)  { d.CreatedBy = by }
 func (d *DmlModel) SetCreatedOn(on string)  { d.CreatedOn = on }
 func (d *DmlModel) SetModifiedBy(by string) { d.ModifiedBy = by }
 func (d *DmlModel) SetModifiedOn(on string) { d.ModifiedOn = on }
-func (d *DmlModel) GetId() string           { return d.Id }
-func (d *DmlModel) SetId(id string)         { d.Id = id }

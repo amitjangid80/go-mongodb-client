@@ -14,7 +14,7 @@ import (
 )
 
 type IUpdateRepository[T mongodb_domain.BaseDmlModel] interface {
-	Update(data T, dbName string, collectionName string, username string) (*T, error)
+	Update(data T, dbName string, collectionName string, createdBy string) (*T, error)
 }
 
 type UpdateRepositoryImpl[T mongodb_domain.BaseDmlModel] struct{}
@@ -24,14 +24,14 @@ func UpdateRepository[T mongodb_domain.BaseDmlModel]() IUpdateRepository[T] {
 }
 
 // Update implements IUpdateRepository.
-func (g *UpdateRepositoryImpl[T]) Update(data T, dbName string, collectionName string, username string) (*T, error) {
+func (g *UpdateRepositoryImpl[T]) Update(data T, dbName string, collectionName string, createdBy string) (*T, error) {
 	var updatedDoc T
 
 	bgCtx := context.Background()
 	ctx, cancel := context.WithTimeout(bgCtx, 5*time.Second)
 	defer cancel()
 
-	data.SetModifiedBy(username)
+	data.SetModifiedBy(createdBy)
 	data.SetModifiedOn(time.Now().UTC().Format(time.RFC3339))
 
 	objectId, err := primitive.ObjectIDFromHex(data.GetId())

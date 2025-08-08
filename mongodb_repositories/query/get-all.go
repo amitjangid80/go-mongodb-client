@@ -13,7 +13,7 @@ import (
 )
 
 type IGetAllRepository[T mongodb_domain.BaseDmlModel] interface {
-	GetAll(dbName string, collectionName string) ([]T, error)
+	GetAll(dbName string, collectionName string, createdBy string) ([]T, error)
 }
 
 type GetAllRepositoryImpl[T mongodb_domain.BaseDmlModel] struct{}
@@ -22,14 +22,14 @@ func GetAllRepository[T mongodb_domain.BaseDmlModel]() IGetAllRepository[T] {
 	return &GetAllRepositoryImpl[T]{}
 }
 
-func (g *GetAllRepositoryImpl[T]) GetAll(dbName string, collectionName string) ([]T, error) {
+func (g *GetAllRepositoryImpl[T]) GetAll(dbName string, collectionName string, createdBy string) ([]T, error) {
 	var results []T = make([]T, 0)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	collection := mongodb_client.GetDb(dbName).Collection(collectionName)
-	cursor, err := collection.Find(ctx, bson.M{})
+	cursor, err := collection.Find(ctx, bson.M{"createdBy": createdBy})
 
 	if err != nil {
 		log.Printf("❌ [GetAll] error while getting data: %v", err)

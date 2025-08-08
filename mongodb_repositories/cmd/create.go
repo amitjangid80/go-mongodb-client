@@ -11,7 +11,7 @@ import (
 )
 
 type ICreateRepository[T mongodb_domain.BaseDmlModel] interface {
-	Create(data T, dbName string, collectionName string, username string) (*T, error)
+	Create(data T, dbName string, collectionName string, createdBy string) (*T, error)
 }
 
 type CreateRepositoryImpl[T mongodb_domain.BaseDmlModel] struct{}
@@ -21,16 +21,16 @@ func CreateRepository[T mongodb_domain.BaseDmlModel]() ICreateRepository[T] {
 }
 
 // Create implements ICreateRepository.
-func (g *CreateRepositoryImpl[T]) Create(data T, dbName string, collectionName string, username string) (*T, error) {
+func (g *CreateRepositoryImpl[T]) Create(data T, dbName string, collectionName string, createdBy string) (*T, error) {
 	bgCtx := context.Background()
 	ctx, cancel := context.WithTimeout(bgCtx, 5*time.Second)
 	defer cancel()
 
 	now := time.Now().UTC().Format(time.RFC3339)
 
-	data.SetCreatedBy(username)
+	data.SetCreatedBy(createdBy)
 	data.SetCreatedOn(now)
-	data.SetModifiedBy(username)
+	data.SetModifiedBy(createdBy)
 	data.SetModifiedOn(now)
 
 	collection := mongodb_client.GetDb(dbName).Collection(collectionName)
