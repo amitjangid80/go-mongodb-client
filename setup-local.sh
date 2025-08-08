@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "[ ℹ  ] Updating packages"
-go mod download
+go get -u all
 
 echo "[ ℹ  ] Cleaning go mod"
 go mod tidy
