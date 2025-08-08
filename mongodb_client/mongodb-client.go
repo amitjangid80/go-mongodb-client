@@ -48,7 +48,10 @@ func ConnectDb(config *MongodbConfig) {
 }
 
 // Create Collections
-func CreateCollections(ctx context.Context, dbName string, collectionName string) {
+func CreateCollections(dbName string, collectionName string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	// List existing collections
 	existingCollections, err := GetDb(dbName).ListCollectionNames(ctx, bson.D{})
 	log.Printf("List of Collections in %s: %v", dbName, existingCollections)
