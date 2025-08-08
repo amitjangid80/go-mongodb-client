@@ -87,6 +87,34 @@ func CreateCollections(config *config.Config) {
 }
 ```
 
+### Create Unique Index
+
+```go
+func CreateIndex() {
+	mongodb_client.CreateUniqueIndex("dbName", "collectionName", "emailId")
+}
+```
+
+### Create Index
+
+```go
+func CreateIndex() {
+	// For Single Field
+	indexModel := mongo.IndexModel{
+		Keys:    bson.M{"YOUR_FIELD_NAME": 1},
+		Options: options.Index().SetUnique(true),
+	}
+
+	// For Multiple Fields
+	indexModel := mongo.IndexModel{
+		Keys:    bson.M{"YOUR_FIELD_NAME": 1, "ANOTHER_FIELD_NAME": 1},
+		Options: options.Index().SetUnique(true),
+	}
+
+	mongodb_client.CreateIndex("YOUR_DB_NAME", "YOUR_COLLECTION_NAME", indexModel)
+}
+```
+
 ## 📦 Usage of Base Model and Repository Functions
 
 ### 📦 Base DML Model
