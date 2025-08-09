@@ -66,19 +66,13 @@ func CreateIndex() {
 
 ```go
 func CreateIndex() {
-	// For Single Field
+	// For Multiple Fields
 	indexModel := mongo.IndexModel{
 		Options: options.Index().SetUnique(true),
 		Keys: bson.D{
 			{Key: "YOUR_FIELD_NAME", Value: 1},
 			{Key: "YOUR_FIELD_NAME", Value: 1},
 		},
-	}
-
-	// For Multiple Fields
-	indexModel := mongo.IndexModel{
-		Keys:    bson.M{"YOUR_FIELD_NAME": 1, "ANOTHER_FIELD_NAME": 1},
-		Options: options.Index().SetUnique(true),
 	}
 
 	mongodb_client.CreateIndex("YOUR_DB_NAME", "YOUR_COLLECTION_NAME", indexModel)
