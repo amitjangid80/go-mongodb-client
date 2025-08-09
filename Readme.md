@@ -49,41 +49,8 @@ func GetDb() {
 
 ```go
 // Create Collections
-func CreateCollections(config *config.Config) {
-	bgCtx := context.Background()
-	ctx, cancel := context.WithTimeout(bgCtx, 5*time.Second)
-	defer cancel()
-
-	collections := []string{
-		// list of your collections which you want to create under a database
-	}
-
-	// List existing collections
-	existingCollections, err := mongodb_client.GetDb().ListCollectionNames(ctx, bson.D{})
-	log.Printf("✅ List of Collections: %s", existingCollections)
-
-	if err != nil {
-		log.Fatalf("❌ Failed to list collections in DB %s: %v", config.ClientDbName, err)
-	}
-
-	existingMap := make(map[string]bool)
-
-	for _, name := range existingCollections {
-		existingMap[name] = true
-	}
-
-	log.Printf("✅ Collections already present: %v", existingMap)
-
-	// Create only missing collections
-	for _, collection := range collections {
-		if !existingMap[collection] {
-			if err := mongodb_client.GetDb("your_database_name").CreateCollection(ctx, collection); err != nil {
-				log.Fatalf("❌ Failed to create collection %s: %v", collection, err)
-			}
-
-			log.Printf("✅ Created collection: %s", collection)
-		}
-	}
+func CreateCollections() {
+	mongodb_client.CreateCollection("YOUR_DB_NAME", "YOUR_COLLECTION_NAME")
 }
 ```
 

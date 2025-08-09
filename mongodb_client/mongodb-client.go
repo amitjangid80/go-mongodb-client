@@ -38,12 +38,12 @@ func ConnectDb(config *MongodbConfig) {
 	client, err = mongo.Connect(ctx, clientOpts)
 
 	if err != nil {
-		log.Fatalf("❌ Failed to connect to MongoDB: %v", err)
+		log.Printf("❌ Failed to connect to MongoDB: %v", err)
 	}
 
 	// Verify connection
 	if err := client.Ping(ctx, nil); err != nil {
-		log.Fatalf("❌ Failed to ping MongoDB: %v", err)
+		log.Printf("❌ Failed to ping MongoDB: %v", err)
 	}
 
 	log.Printf("✅ Connected to MongoDB on port: %s", config.Port)
@@ -59,7 +59,7 @@ func CreateCollection(dbName string, collectionName string) {
 	log.Printf("List of Collections in %s: %v", dbName, existingCollections)
 
 	if err != nil {
-		log.Fatalf("❌ Failed to list collections in DB %s: %v", dbName, err)
+		log.Printf("❌ Failed to list collections in DB %s: %v", dbName, err)
 	}
 
 	existingMap := make(map[string]bool)
@@ -71,7 +71,7 @@ func CreateCollection(dbName string, collectionName string) {
 	// Create only missing collections
 	if !existingMap[collectionName] {
 		if err := GetDb(dbName).CreateCollection(ctx, collectionName); err != nil {
-			log.Fatalf("❌ Failed to create collection %s: %v", collectionName, err)
+			log.Printf("❌ Failed to create collection %s: %v", collectionName, err)
 		}
 
 		log.Printf("✅ Created collection: %s", collectionName)
@@ -92,7 +92,7 @@ func CreateCollections(dbName string, collections []string) {
 	log.Printf("List of Collections: %s", existingCollections)
 
 	if err != nil {
-		log.Fatalf("Failed to list collections in DB %s: %v", dbName, err)
+		log.Printf("Failed to list collections in DB %s: %v", dbName, err)
 	}
 
 	existingMap := make(map[string]bool)
@@ -107,7 +107,7 @@ func CreateCollections(dbName string, collections []string) {
 	for _, collection := range collections {
 		if !existingMap[collection] {
 			if err := db.CreateCollection(ctx, collection); err != nil {
-				log.Fatalf("Failed to create collection %s: %v", collection, err)
+				log.Printf("Failed to create collection %s: %v", collection, err)
 			}
 
 			log.Printf("Created collection: %s", collection)
@@ -122,8 +122,8 @@ func CreateIndex(dbName string, collectionName string, indexModel mongo.IndexMod
 	_, err := GetDb(dbName).Collection(collectionName).Indexes().CreateOne(ctx, indexModel)
 
 	if err != nil {
-		log.Fatalf("❌ Failed to create index for collection: %s in db: %s", collectionName, dbName)
-		log.Fatalf("❌ Error while creating creating index: %v", err)
+		log.Printf("❌ Failed to create index for collection: %s in db: %s", collectionName, dbName)
+		log.Printf("❌ Error while creating creating index: %v", err)
 	} else {
 		log.Println("✅ Index Created Successfully")
 	}
@@ -141,8 +141,8 @@ func CreateUniqueIndex(dbName string, collectionName string, field string) {
 	_, err := GetDb(dbName).Collection(collectionName).Indexes().CreateOne(ctx, indexModel)
 
 	if err != nil {
-		log.Fatalf("❌ Failed to create index for collection: %s in db: %s", collectionName, dbName)
-		log.Fatalf("❌ Error while creating creating index: %v", err)
+		log.Printf("❌ Failed to create index for collection: %s in db: %s", collectionName, dbName)
+		log.Printf("❌ Error while creating creating index: %v", err)
 	} else {
 		log.Println("✅ Index Created Successfully")
 	}
