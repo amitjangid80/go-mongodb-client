@@ -36,6 +36,13 @@ func main() {
 }
 ```
 
+### Models/Domains
+
+```go
+1. DmlModel // import from mongodb_domain.DmlModel
+2. ResponseModel // import from mongodb_domain.ResponseModel
+```
+
 ### Get database by name
 
 ```go
